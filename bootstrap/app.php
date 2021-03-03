@@ -2,12 +2,6 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// try {
-//     (new Dotenv\Dotenv(__DIR__ . '/../'))->load();
-// } catch (Dotenv\Exception\InvalidPathException $e) {
-//     //
-// }
-
 try {
     (Dotenv\Dotenv::create(__DIR__ . '/../'))->load();
 } catch (Dotenv\Exception\InvalidPathException $e) {
@@ -30,7 +24,8 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__ . '/../')
 );
 
-
+// To fix path.config not found during ./artisan key:generate
+//$app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
 
 
 $app->withFacades(true, [
@@ -44,30 +39,10 @@ $app->register(\Illuminate\Redis\RedisServiceProvider::class);
 $app->alias('cache', 'Illuminate\Cache\CacheManager');
 $app->alias('auth', 'Illuminate\Auth\AuthManager');
 
-// use Illuminate\Support\Facades\Cache;
-// use Illuminate\Support\Facades\Storage;
-// use Barryvdh\Snappy\Facades\SnappyPdf;
-// use Illuminate\Support\Facades\Notification;
-
-
 
 $app->withEloquent();
 
 
-
-
-//
-
-
-/*config(['database.redis'=>[
-    'cluster' => env('REDIS_CLUSTER', false),
-    'default' => [
-        'host' => env('REDIS_HOST', '127.0.0.1'),
-        'port' => env('REDIS_PORT', 6379),
-        'database' => env('REDIS_DATABASE', 0),
-        'password' => env('REDIS_PASSWORD', null),
-    ],
-]]);*/
 
 /*
 |--------------------------------------------------------------------------

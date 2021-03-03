@@ -73,10 +73,6 @@ class Register extends Controller
         }
 
         $base_modules = ['dashboard','settings','addons','integrations','appstore'];
-        
-        //$possible_modules = ['customers','people','finance','ecommerce','sales'];
-        //$module_preference = array_merge($request->input('module', []),$base_modules);
-        //$module = in_array($module_preference, $possible_modules) ? $module_preference : "all";
 
         $possible_features = ['selling_online','payroll','finance','all'];
         $feature_modules = [
@@ -179,7 +175,7 @@ class Register extends Controller
                 'website' => $data->website
               ]);
               $db->table('users')->insert([
-                'uuid' => $dorcasUser->id,
+                'uuid' => $dorcasUser->uuid,
                 'firstname' => $dorcasUser->firstname,
                 'lastname' => $dorcasUser->lastname,
                 'email' => $dorcasUser->email,
