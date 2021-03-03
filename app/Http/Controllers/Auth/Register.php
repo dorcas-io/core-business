@@ -164,23 +164,24 @@ class Register extends Controller
       try {
          $db = DB::connection('hub_mysql');
          DB::transaction(function () use(&$data,$db,&$dorcasUser) {
-           $company = new Company;
-             $company->setConnection('hub_mysql');
-             $company =  $company->create([
-                'uuid' => $data->id,
-                'reg_number' => $data->registration,
-                'name' => $data->name,
-                'phone' => $data->phone,
-                'email' => $data->email,
-                'website' => $data->website
-              ]);
+           //NO NEED TO CREATE NEW COMPANY, we've alread got one
+          //  $company = new Company;
+          //    $company->setConnection('hub_mysql');
+          //    $company =  $company->create([
+          //       'uuid' => $data->id,
+          //       'reg_number' => $data->registration,
+          //       'name' => $data->name,
+          //       'phone' => $data->phone,
+          //       'email' => $data->email,
+          //       'website' => $data->website
+          //     ]);
               $db->table('users')->insert([
                 'uuid' => $dorcasUser->uuid,
                 'firstname' => $dorcasUser->firstname,
                 'lastname' => $dorcasUser->lastname,
                 'email' => $dorcasUser->email,
                 'password' => $dorcasUser->password,
-                'company_id' => $company->id,
+                'company_id' => $data->id,
                 'gender' => $dorcasUser->gender,
                 'photo_url' => $dorcasUser->photo,
                 'is_verified' => (int) $dorcasUser->is_verified

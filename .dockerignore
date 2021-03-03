@@ -25,10 +25,8 @@ npm-debug.log
 .git
 
 /vendor
-/.idea
 
-.env
+storage/logs/*
 
-/.phpintel
 
 
