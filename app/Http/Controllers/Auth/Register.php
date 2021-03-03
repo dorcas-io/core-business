@@ -176,7 +176,7 @@ class Register extends Controller
           //       'website' => $data->website
           //     ]);
               $db->table('users')->insert([
-                'uuid' => $dorcasUser->uuid,
+                'uuid' => $dorcasUser->id,
                 'firstname' => $dorcasUser->firstname,
                 'lastname' => $dorcasUser->lastname,
                 'email' => $dorcasUser->email,
