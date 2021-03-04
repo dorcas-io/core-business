@@ -164,7 +164,6 @@ class Register extends Controller
       try {
          $db = DB::connection('hub_mysql');
          DB::transaction(function () use(&$data,$db,&$dorcasUser) {
-           //NO NEED TO CREATE NEW COMPANY, we've alread got one
           //  $company = new Company;
           //    $company->setConnection('hub_mysql');
           //    $company =  $company->create([
@@ -175,6 +174,14 @@ class Register extends Controller
           //       'email' => $data->email,
           //       'website' => $data->website
           //     ]);
+              $db->table('companies')->insert([
+                 'uuid' => $data->id,
+                 'reg_number' => $data->registration,
+                 'name' => $data->name,
+                 'phone' => $data->phone,
+                 'email' => $data->email,
+                 'website' => $data->website
+               ]);
               $db->table('users')->insert([
                 'uuid' => $dorcasUser->id,
                 'firstname' => $dorcasUser->firstname,
