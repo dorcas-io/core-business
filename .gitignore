@@ -7,6 +7,12 @@ bootstrap/app.php
 #/storage/oauth-*
 /config
 composer-live.json
-composer-dev.json
-
+dorcas-api.yaml
+dorcas-base.yml
+dorcas-base.sql
+dorcas-update.sql
+dorcas.sql
+rds-ca-2019-root.pem
+ansible-automation
+/.phpintel
 storage/logs/*
