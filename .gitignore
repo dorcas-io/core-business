@@ -3,12 +3,7 @@
 /public/uploads
 .DS_Store
 /sftp-config.json
-bootstrap/app.php
 #/storage/oauth-*
-<<<<<<< HEAD
-/config
-=======
->>>>>>> main
 composer-live.json
 composer-dev.json
 storage/logs/*
