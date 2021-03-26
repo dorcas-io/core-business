@@ -158,24 +158,25 @@ class Register extends Controller
         $resource = new Item($user, $transformer, 'user');
         return response()->json($fractal->createData($resource)->toArray());
     }
-    
+    //189,141,174
     private function registerHubUser($data,$dorcasUser)
     {
       try {
          $db = DB::connection('hub_mysql');
          DB::transaction(function () use(&$data,$db,&$dorcasUser) {
-
-              $company_id = $db->table('companies')->insertGetId([
-                 'uuid' => $data->uuid,
-                 'reg_number' => $data->registration,
-                 'name' => $data->name,
-                 'phone' => $data->phone,
-                 'email' => $data->email,
-                 'website' => $data->website
-               ]);
-
-              $db->table('users')->insert([
-                'uuid' => $dorcasUser->uuid,
+           $company = new Company;
+             $company->setConnection('hub_mysql');
+             $company =  $company->create([
+                'uuid' => $data->id,
+                'reg_number' => $data->registration,
+                'name' => $data->name,
+                'phone' => $data->phone,
+                'email' => $data->email,
+                'website' => $data->website
+              ]);
+              $table_users = !empty(env('DB_HUB_PREFIX')) ? env('DB_HUB_PREFIX') . "users" : "users";
+              $db->table($table_users)->insert([
+                'uuid' => $dorcasUser->id,
                 'firstname' => $dorcasUser->firstname,
                 'lastname' => $dorcasUser->lastname,
                 'email' => $dorcasUser->email,
