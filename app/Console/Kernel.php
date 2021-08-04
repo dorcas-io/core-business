@@ -67,6 +67,19 @@ class Kernel extends ConsoleKernel
         // $schedule->call(function () {
         //     dispatch(new AutoBilling());
         // })->dailyAt('07:00');
-        # auto charge customers at this time
+        // # auto charge customers at this time
     }
+
+    /**
+     * Register the commands for the application.
+     *
+     * @return void
+     */
+    protected function commands()
+    {
+        $this->load(__DIR__.'/Commands');
+
+        //require base_path('routes/console.php');
+    }
+
 }
