@@ -59,3 +59,6 @@ jobs:
             sudo chmod u=rwx,g=rx,o=x ${{ secrets.APPDIR_STAGING_BUSINESS_CORE }}/artisan
             find "${{ secrets.APPDIR_STAGING_BUSINESS_CORE }}" -type f -name '*.php' -exec chmod 644 {} \;
             php artisan dorcas:setup --database="business-core"
+            php artisan dorcas:import-countries
+            php artisan dorcas:import-states
+            php artisan dorcas:roles-and-permissions
