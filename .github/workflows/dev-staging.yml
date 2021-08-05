@@ -50,7 +50,6 @@ jobs:
             cp /var/www/deploy-files/.env-business-core-staging ${{ secrets.APPDIR_STAGING_BUSINESS_CORE }}/.env
             cd ${{ secrets.APPDIR_STAGING_BUSINESS_CORE }}
             composer install --optimize-autoloader --no-dev
-            php artisan key:generate
             sudo chown -R $USER:www-data ${{ secrets.APPDIR_STAGING_BUSINESS_CORE }}/storage
             sudo chmod -R 775 ${{ secrets.APPDIR_STAGING_BUSINESS_CORE }}/storage
             sudo chmod -R u=rwx,g=rwx,o=rw ${{ secrets.APPDIR_STAGING_BUSINESS_CORE }}/storage/logs
