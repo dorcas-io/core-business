@@ -11,6 +11,7 @@ use App\Http\Controllers\Setup\Init as AuthInit;
 use App\Http\Controllers\Auth\Register as AuthRegister;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class DorcasSetup extends Command
 {
@@ -19,7 +20,7 @@ class DorcasSetup extends Command
      *
      * @var string
      */
-    protected $signature = 'dorcas:setup {--database=}';
+    protected $signature = 'dorcas:setup {--database=} {--preserve} {--reset}';
 
     /**
      * The console command description.
@@ -60,6 +61,9 @@ class DorcasSetup extends Command
         $database = getenv('DB_DATABASE');
         $databaseHub = getenv('DB_HUB_DATABASE');
 
+        $preserveDB = $this->option('preserve') ?? false;
+
+        $resetDB = $this->option('reset') ?? false;
 
         if (!$databaseHub) {
             $this->info('Skipping creation of database as env(DB_HUB_DATABASE) is empty');
@@ -71,16 +75,61 @@ class DorcasSetup extends Command
             return;
         }
 
+        if ($resetDB) {
+            $this->info('Deleting Databases...');
+
+            try {
+                $conn = mysqli_connect(env('DB_HUB_HOST'), env('DB_HUB_USERNAME'), env('DB_HUB_PASSWORD'));
+
+                if (!$conn) {
+                    die("Connection to HUB failed: " . mysqli_connect_error());
+                }
+
+                $sql = "DROP DATABASE `" . $databaseHub . "`";
+                if (mysqli_query($conn, $sql)) {
+                    $this->info(sprintf('Successfully DELETED %s database', $databaseHub));
+                } else {
+                    $this->error(sprintf('Error deleting %s database, %s', $databaseHub, mysqli_error($conn)));
+                }
+                
+                mysqli_close($conn);
+
+            } catch (Exception $exception) {
+                $this->error(sprintf('Failed to delete %s database, %s', $database, $exception->getMessage()));
+            }
+
+            try {
+                $conn = mysqli_connect(env('DB_HOST'), env('DB_USERNAME'), env('DB_PASSWORD'));
+
+                if (!$conn) {
+                    die("Connection to CORE failed: " . mysqli_connect_error());
+                }
+
+                $sql = "DROP DATABASE `" . $database . "`";
+                if (mysqli_query($conn, $sql)) {
+                    $this->info(sprintf('Successfully DELETED %s database', $database));
+                } else {
+                    $this->error(sprintf('Error deleting %s database, %s', $database, mysqli_error($conn)));
+                }
+                
+                mysqli_close($conn);
+
+            } catch (Exception $exception) {
+                $this->error(sprintf('Failed to delete %s database, %s', $database, $exception->getMessage()));
+            }
+
+        }
+
         $firstTimeCore = $this->checkDB("CORE", "mysql", $database);
         $firstTimeHub = $this->checkDB("HUB", "hub_mysql", $databaseHub);
 
 
-        if ($firstTimeHub) {
+        if ($firstTimeHub || !$preserveDB) {
 
-            $this->info('Checking / Creating HUB Database');
+            $this->info('Checking / Creating HUB Database via ' . env('DB_HUB_HOST'));
 
             try {
-                $conn = mysqli_connect(getenv('DB_HUB_HOST'), getenv('DB_HUB_USERNAME'), getenv('DB_HUB_PASSWORD'));
+                $conn = mysqli_connect(env('DB_HUB_HOST'), env('DB_HUB_USERNAME'), env('DB_HUB_PASSWORD'));
 
                 if (!$conn) {
                     die("Connection to HUB failed: " . mysqli_connect_error());
@@ -110,7 +159,7 @@ class DorcasSetup extends Command
                     throw new FileNotFoundException('Could not find the hub.sql database file at: '.$filename);
                 }
                 if (!is_readable($filename)) {
-                    throw new FileException('The core.sql ('.$filename.') file is not readable by the process.');
+                    throw new FileException('The hub.sql ('.$filename.') file is not readable by the process.');
                 }
 
 
@@ -161,7 +210,7 @@ class DorcasSetup extends Command
 
         }
 
-        if ($firstTimeCore) {
+        if ($firstTimeCore || !$preserveDB) {
         
             $this->info('Checking / Creating CORE Database');
 
@@ -264,7 +313,7 @@ class DorcasSetup extends Command
                 $data = [
                     "firstname" => "Admin",
                     "lastname" => "User",
-                    "email" => "demo@dorcas.io",
+                    "email" => getenv('ADMINISTRATOR_EMAIL'),
                     "installer" => "true",
                     "domain" => getenv('DORCAS_BASE_DOMAIN'),
                     "password" => $password,
@@ -285,7 +334,7 @@ class DorcasSetup extends Command
                 $fractal = new \League\Fractal\Manager;
                 $user = $register->register($request, $fractal);
 
-                $this->info('Username' . $data["email"] . " & password: " . $password);
+                $this->info('Username: ' . $data["email"] . " & password: " . $password);
 
 
 
